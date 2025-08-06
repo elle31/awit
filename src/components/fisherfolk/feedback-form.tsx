@@ -6,12 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useTranslation } from "@/contexts/language-context";
 
-export function FeedbackForm() {
-    const { t } = useTranslation();
-
+export function FeedbackForm({ t }: { t: (key: string) => string }) {
   return (
+    <div className="container mx-auto p-4 md:p-8 max-w-2xl">
+      <div className="space-y-2 mb-8">
+        <h1 className="text-3xl font-bold font-headline tracking-tight">{t("Submit Feedback")}</h1>
+        <p className="text-muted-foreground">
+          {t("Have a complaint or suggestion? Let us know.")}
+        </p>
+      </div>
       <Card>
         <CardHeader>
           <CardTitle>{t("Feedback Form")}</CardTitle>
@@ -44,5 +48,6 @@ export function FeedbackForm() {
             </div>
         </CardContent>
       </Card>
+    </div>
   );
 }
