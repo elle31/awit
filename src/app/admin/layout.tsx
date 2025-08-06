@@ -11,12 +11,10 @@ export default function AdminLayout({
 }) {
   return (
     <InspectionsProvider>
-      <Suspense fallback={<div>Loading...</div>}>
-        <div className="flex min-h-screen w-full flex-col">
-          <AdminHeader />
-          <main className="flex-1 bg-muted/40">{children}</main>
-        </div>
-      </Suspense>
+      <div className="flex min-h-screen w-full flex-col">
+        <AdminHeader />
+        <main className="flex-1 bg-muted/40">{children}</main>
+      </div>
     </InspectionsProvider>
   );
 }
