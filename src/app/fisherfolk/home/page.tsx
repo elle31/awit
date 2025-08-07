@@ -13,6 +13,8 @@ import { useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 
+export const dynamic = 'force-dynamic';
+
 const actions = [
   {
     href: "/fisherfolk/register",
