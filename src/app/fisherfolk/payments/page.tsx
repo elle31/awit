@@ -17,6 +17,8 @@ import { Payment } from "@/lib/types";
 import { Separator } from "@/components/ui/separator";
 
 const feeCategories = {
+
+
     vessels: [
         { item: "Pump boat less than 10 HP", fee: "Php 330.00" },
         { item: "Pump boat 10 HP to 16 HP", fee: "Php 360.00" },
