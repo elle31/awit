@@ -83,9 +83,6 @@ function MyRegistrationsClientComponent() {
                     actor: reg.ownerName
                 }];
                 return { ...reg, status: 'Approved' as 'Approved', expiryDate: newExpiryDate, history: newHistory };
-                            </div>
-                        </div>
-                    </CardHeader>
                     <CardContent className="flex-grow space-y-2 text-sm text-muted-foreground">
                         <p><strong>{t("Registration Date:")}</strong> {reg.registrationDate}</p>
                         <p><strong>{t("Expiry Date:")}</strong> {reg.expiryDate}</p>
