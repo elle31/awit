@@ -217,10 +217,273 @@ function FisherfolkRegisterDetailsPageContent() {
   const formValues = form.watch();
 
   return (
+    <>
+      <Suspense fallback={<div>Loading...</div>}>
+        {/* START_RETURN */}
+        <div className="container mx-auto max-w-4xl p-4 md:p-8">
+          <div className="space-y-2 mb-8">
+            <h1 className="text-3xl font-bold font-headline tracking-tight">{t("New Registration - Step 2")}</h1>
+            <p className="text-muted-foreground">
+              {t("Provide the details for your vessel or fishing gear.")}
+            </p>
+          </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(() => setIsSummaryOpen(true))} className="space-y-8">
+
+              <RegistrationTypeToggle
+                active={registrationType}
+                onVesselClick={() => handleRegistrationTypeChange('vessel')}
+                onGearClick={() => handleRegistrationTypeChange('gear')}
+              />
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>{registrationType === 'vessel' ? t("Vessel Details") : t("Fishing Gear Details")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {registrationType === 'vessel' ? (
+                    <div className="space-y-4">
+                      <div className="grid md:grid-cols-3 gap-4">
+                        <FormField control={form.control} name="vesselId" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("Vessel ID")}</FormLabel>
+                            <FormControl><Input {...field} readOnly className="bg-muted" /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                        <FormField control={form.control} name="vesselType" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("Vessel Type")}</FormLabel>
+                            <FormControl><Input placeholder="e.g., Motorized Banca" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                        <FormField control={form.control} name="vesselName" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("Vessel Name")}</FormLabel>
+                            <FormControl><Input placeholder="e.g., Queen Tuna" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                      </div>
+                      <div className="grid md:grid-cols-3 gap-4">
+                        <FormField control={form.control} name="horsePower" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("Horse Power")}</FormLabel>
+                            <FormControl><Input placeholder="e.g., 16 HP" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                        <FormField control={form.control} name="engineMake" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("Engine Make")}</FormLabel>
+                            <FormControl><Input placeholder="e.g., Yamaha" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                        <FormField control={form.control} name="engineSerialNumber" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("Engine Serial No.")}</FormLabel>
+                            <FormControl><Input placeholder="e.g., YMH12345" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                      </div>
+                      <div className="grid md:grid-cols-4 gap-4">
+                        <FormField control={form.control} name="grossTonnage" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("Gross Tonnage")}</FormLabel>
+                            <FormControl><Input placeholder="e.g., 3 GT" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                        <FormField control={form.control} name="length" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("Length")}</FormLabel>
+                            <FormControl><Input placeholder="e.g., 15m" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                        <FormField control={form.control} name="breadth" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("Breadth")}</FormLabel>
+                            <FormControl><Input placeholder="e.g., 3m" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                        <FormField control={form.control} name="depth" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("Depth")}</FormLabel>
+                            <FormControl><Input placeholder="e.g., 1.5m" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <FormField control={form.control} name="gearId" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("Gear ID")}</FormLabel>
+                            <FormControl><Input {...field} readOnly className="bg-muted"/></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                        <FormField control={form.control} name="gearType" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("Gear Type")}</FormLabel>
+                            <FormControl><Input placeholder="e.g., Gillnet" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                      </div>
+                      <FormField control={form.control} name="specifications" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("Specifications")}</FormLabel>
+                          <FormControl><Textarea placeholder="e.g., 100m length, 2-inch mesh size" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("Upload Gear/Vessel Photos")}</CardTitle>
+                  <CardDescription>{t("Upload photos of your vessel or gear. Include a photo of the owner with the vessel/gear.")}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={handlePhotoUpload}
+                    className="hidden"
+                  />
+                  <Button variant="outline" type="button" className="w-full" onClick={() => fileInputRef.current?.click()}>
+                    <Upload className="mr-2 h-4 w-4" /> {t("Upload Files")}
+                  </Button>
+                  {photos.length > 0 && (
+                    <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2">
+                      {photos.map((photo, index) => (
+                        <div key={index} className="relative group">
+                          <Image
+                            src={URL.createObjectURL(photo)}
+                            alt={`preview ${index}`}
+                            width={150}
+                            height={150}
+                            className="w-full h-auto rounded-md object-cover aspect-square"
+                          />
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            type="button"
+                            className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100"
+                            onClick={() => removePhoto(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                          <p className="text-xs text-muted-foreground truncate mt-1">{photo.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" size="lg" onClick={() => router.back()}>
+                  <ArrowLeft className="mr-2 h-4 w-4" /> {t("Back")}
+                </Button>
+                <Button type="submit" size="lg">
+                  <FileCheck2 className="mr-2 h-4 w-4" /> {t("Submit Registration")}
+                </Button>
+              </div>
+            </form>
+          </Form>
+          <Dialog open={isSummaryOpen} onOpenChange={setIsSummaryOpen}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Registration Summary</DialogTitle>
+                <DialogDescription>
+                  Please review your registration details before submitting.
+                </DialogDescription>
+              </DialogHeader>
+              <ScrollArea className="max-h-[60vh]">
+                <div className="space-y-4 p-1">
+                  <h3 className="font-semibold">Owner Information</h3>
+                  <p><strong>{t("Full Name")}:</strong> {ownerInfo.ownerName}</p>
+                  <p><strong>{t("Email Address")}:</strong> {ownerInfo.email}</p>
+                  <p><strong>{t("Contact Number")}:</strong> {ownerInfo.contact}</p>
+                  <p><strong>{t("Address")}:</strong> {ownerInfo.address}</p>
+                  <p><strong>{t("FishR No.")}:</strong> {ownerInfo.fishrNo || 'N/A'}</p>
+
+                  <h3 className="font-semibold mt-4">{registrationType === 'vessel' ? "Vessel" : "Gear"} Details</h3>
+                  {registrationType === 'vessel' ? (
+                    <>
+                      <p><strong>{t("Registration Type")}:</strong> {t("Vessel")}</p>
+                      <p><strong>{t("Vessel ID")}:</strong> {formValues.vesselId}</p>
+                      <p><strong>{t("Vessel Name")}:</strong> {formValues.vesselName}</p>
+                      <p><strong>{t("Vessel Type")}:</strong> {formValues.vesselType}</p>
+                      <p><strong>{t("Horse Power")}:</strong> {formValues.horsePower}</p>
+                      <p><strong>{t("Engine Make")}:</strong> {formValues.engineMake}</p>
+                      <p><strong>{t("Engine Serial No.")}:</strong> {formValues.engineSerialNumber}</p>
+                      <p><strong>{t("Gross Tonnage")}:</strong> {formValues.grossTonnage}</p>
+                      <p><strong>{t("Length")}:</strong> {formValues.length}</p>
+                      <p><strong>{t("Breadth")}:</strong> {formValues.breadth}</p>
+                      <p><strong>{t("Depth")}:</strong> {formValues.depth}</p>
+                    </>
+                  ) : (
+                    <>
+                      <p><strong>{t("Registration Type")}:</strong> {t("Fishing Gear")}</p>
+                      <p><strong>{t("Gear ID")}:</strong> {formValues.gearId}</p>
+                      <p><strong>{t("Gear Type")}:</strong> {formValues.gearType}</p>
+                      <p><strong>{t("Specifications")}:</strong> {formValues.specifications}</p>
+                    </>
+                  )}
+                  <div>
+                    <strong>{t("Uploaded Photos")}:</strong>
+                    {photos.length > 0 ? (
+                      <ul className="list-disc pl-5 mt-2">
+                        {photos.map((photo, index) => (
+                          <li key={index}>{photo.name}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>{t("No photos uploaded.")}</p>
+                    )}
+                  </div>
+                </div>
+              </ScrollArea>
+              <DialogFooter className="sm:justify-end gap-2">
+                <Button type="button" variant="secondary" onClick={() => setIsSummaryOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="button" onClick={form.handleSubmit(onSubmit)}>
+                  Confirm
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </Suspense>
+      {/* END_RETURN */}
+    </>
+  );
+}
+
+export default function FisherfolkRegisterDetailsPage() {
+  return (
     <Suspense fallback={<div>Loading...</div>}>
-      {/* START_RETURN */}
-      <>
-       <div className="space-y-2 mb-8">
+      <FisherfolkRegisterDetailsPageContent />
+    </Suspense>
+  );
+}
+
           <h1 className="text-3xl font-bold font-headline tracking-tight">{t("New Registration - Step 2")}</h1>
           <p className="text-muted-foreground">
             {t("Provide the details for your vessel or fishing gear.")}
