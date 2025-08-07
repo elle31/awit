@@ -731,7 +731,6 @@ export default function FisherfolkRegisterDetailsPage() {
             </DialogFooter>
         </DialogContent>
       </div>
-    </Suspense>
   );
   // END_RETURN
 }
