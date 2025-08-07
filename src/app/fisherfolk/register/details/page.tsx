@@ -7,6 +7,8 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from 'next/navigation';
 
 import { Button } from "@/components/ui/button";
+
+export const dynamic = 'force-dynamic';
 import {
   Form,
   FormControl,
@@ -216,8 +218,9 @@ function FisherfolkRegisterDetailsPageContent() {
 
   return (
     <Dialog open={isSummaryOpen} onOpenChange={setIsSummaryOpen}>
+    <Suspense fallback={<div>Loading...</div>}>
       <div className="container mx-auto max-w-4xl p-4 md:p-8">
-        <div className="space-y-2 mb-8">
+       <div className="space-y-2 mb-8">
           <h1 className="text-3xl font-bold font-headline tracking-tight">{t("New Registration - Step 2")}</h1>
           <p className="text-muted-foreground">
             {t("Provide the details for your vessel or fishing gear.")}
@@ -465,6 +468,7 @@ function FisherfolkRegisterDetailsPageContent() {
         </DialogContent>
       </div>
     </Dialog>
+    </Suspense>
   );
 }
 
