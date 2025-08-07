@@ -217,8 +217,7 @@ function FisherfolkRegisterDetailsPageContent() {
   const formValues = form.watch();
 
   return (
-    <Dialog open={isSummaryOpen} onOpenChange={setIsSummaryOpen}>
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>Loading...</div>}> {/* Suspense should be the top-level element */}
       <div className="container mx-auto max-w-4xl p-4 md:p-8">
        <div className="space-y-2 mb-8">
           <h1 className="text-3xl font-bold font-headline tracking-tight">{t("New Registration - Step 2")}</h1>
@@ -404,6 +403,7 @@ function FisherfolkRegisterDetailsPageContent() {
             </div>
           </form>
         </Form>
+       <Dialog open={isSummaryOpen} onOpenChange={setIsSummaryOpen}> {/* Dialog is correctly placed within the page content */}
         <DialogContent className="sm:max-w-md">
             <DialogHeader>
                 <DialogTitle>Registration Summary</DialogTitle>
@@ -467,8 +467,8 @@ function FisherfolkRegisterDetailsPageContent() {
             </DialogFooter>
         </DialogContent>
       </div>
-    </Dialog>
     </Suspense>
+    </Dialog>
   );
 }
 
