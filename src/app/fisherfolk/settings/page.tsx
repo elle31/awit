@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Suspense } from "react";
 import { useTranslation } from "@/contexts/language-context";
+
+export const dynamic = 'force-dynamic';
 
 export default function FisherfolkSettingsPage() {
     const { t } = useTranslation();
@@ -56,5 +59,7 @@ export default function FisherfolkSettingsPage() {
         </Card>
       </div>
     </div>
+
+
   );
 }
