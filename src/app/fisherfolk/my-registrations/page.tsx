@@ -1,6 +1,7 @@
 
 'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Suspense } from 'react';
 import { registrations, getStatusIcon, Registration } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,9 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import MyRegistrationsClientComponent from './MyRegistrationsClientComponent';
 
+export const dynamic = 'force-dynamic';
 export default function MyRegistrationsPage() {
     const { t } = useTranslation();
     const { toast } = useToast();
@@ -57,40 +60,29 @@ export default function MyRegistrationsPage() {
     };
 
   return (
-    <Dialog onOpenChange={(isOpen) => !isOpen && setSelectedRegistration(null)}>
-        <div className="container mx-auto p-4 md:p-8">
-        <div className="space-y-2 mb-8">
-            <h1 className="text-3xl font-bold font-headline tracking-tight">{t("My Registrations")}</h1>
-            <p className="text-muted-foreground">
-            {t("Here is a list of all your registered vessels and fishing gear.")}
-            </p>
-        </div>
+    <Suspense fallback={<div>Loading...</div>}>
+        <MyRegistrationsClientComponent />
+    </Suspense>
+  );
+}
 
-        {myRegistrations.length === 0 ? (
-            <Card>
-            <CardContent className="p-8 text-center">
-                <h3 className="text-lg font-semibold">{t("No Registrations Found")}</h3>
-                <p className="text-muted-foreground mt-1">{t("You have not registered any vessels or gear yet.")}</p>
-                <Button asChild className="mt-4">
-                <Link href="/fisherfolk/register">{t("Register Now")}</Link>
-                </Button>
-            </CardContent>
-            </Card>
-        ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {myRegistrations.map((reg) => {
-                const Icon = getStatusIcon(reg.status);
-                return (
-                <Card key={reg.id} className="flex flex-col">
-                    <CardHeader>
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <Badge variant={reg.status === 'Pending' ? 'secondary' : reg.status === 'Rejected' || reg.status === 'Expired' ? 'destructive' : 'default'} className="capitalize mb-2">
-                                <Icon className="mr-1 h-3 w-3" />
-                                {t(reg.status)}
-                                </Badge>
-                                <CardTitle className="text-lg">{reg.type === 'Vessel' ? reg.vesselName : reg.gearType}</CardTitle>
-                                <CardDescription>ID: {reg.id}</CardDescription>
+function MyRegistrationsClientComponent() {
+ const { t } = useTranslation();
+    const { toast } = useToast();
+    const [myRegistrations, setMyRegistrations] = useState<Registration[]>(registrations.filter(r => r.ownerName === 'Juan Dela Cruz'));
+    const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
+
+    const handleRenew = (registrationId: string) => {
+        const newExpiryDate = new Date(new Date().getFullYear(), 11, 31).toISOString().split('T')[0];
+
+        const updatedRegistrations = myRegistrations.map(reg => {
+            if (reg.id === registrationId) {
+                const newHistory = [...reg.history, {
+                    action: 'Renewed',
+                    date: new Date().toISOString().split('T')[0],
+                    actor: reg.ownerName
+                }];
+                return { ...reg, status: 'Approved' as 'Approved', expiryDate: newExpiryDate, history: newHistory };
                             </div>
                         </div>
                     </CardHeader>
@@ -109,6 +101,7 @@ export default function MyRegistrationsPage() {
                                 <Eye className="mr-2 h-4 w-4" /> {t("Details")}
                             </Button>
                         </DialogTrigger>
+
                     </div>
                 </Card>
                 )
@@ -116,8 +109,12 @@ export default function MyRegistrationsPage() {
             </div>
         )}
         </div>
-        {selectedRegistration && (
-            <DialogContent className="sm:max-w-lg">
+            </div>
+        )}
+
+        {/* Dialog for Registration Details */}
+      {selectedRegistration && (
+ <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
                     <DialogTitle>{t("Registration Details")}</DialogTitle>
                     <DialogDescription>
@@ -143,11 +140,46 @@ export default function MyRegistrationsPage() {
                         <div>
                             <h4 className="font-medium text-sm mb-2">{t("Fishing Gear Details")}</h4>
                              <p className="text-sm text-muted-foreground whitespace-pre-wrap">{selectedRegistration.fishingGearDetails}</p>
+                         </div>
+
+                     )}
+                     <Separator />
+                     <div>
+                         <h4 className="font-medium text-sm mb-2">{t("History")}</h4>
+                         <div className="text-sm text-muted-foreground space-y-2">
+                             {selectedRegistration.history.map((item, index) => (
+                                 <p key={index}><strong>{item.date}:</strong> {t(item.action)} {t("by")} {item.actor}</p>
+                             ))}
+                         </div>
+                     </div>
+                     <Separator />
+                      <div>
+                         <h4 className="font-medium text-sm mb-2">{t("Fees and Payments")}</h4>
+                         <div className="text-sm text-muted-foreground space-y-1">
+                             <p><strong>{t("Total Fee")}:</strong> {selectedRegistration.fees.totalFee.toFixed(2)}</p>
+                             <p><strong>{t("Status")}:</strong> <Badge variant={selectedRegistration.fees.paymentStatus === 'Paid' ? 'default' : 'secondary'}>{t(selectedRegistration.fees.paymentStatus)}</Badge></p>
+                             {selectedRegistration.fees.paymentDate && <p><strong>{t("Payment Date")}:</strong> {selectedRegistration.fees.paymentDate}</p>}
+                             {selectedRegistration.fees.transactionId && <p><strong>{t("Transaction ID")}:</strong> {selectedRegistration.fees.transactionId}</p>}
+                             {selectedRegistration.fees.paymentMethod && <p><strong>{t("Payment Method")}:</strong> {t(selectedRegistration.fees.paymentMethod)}</p>}
+                         </div>
+                     </div>
+                      <Separator />
+                       <div>
+                         <h4 className="font-medium text-sm mb-2">{t("Documents")}</h4>
+                         <div className="text-sm text-muted-foreground space-y-1">
+                             {selectedRegistration.documents.length === 0 ? (
+                                 <p>{t("No documents uploaded.")}</p>
+                             ) : (
+                                 selectedRegistration.documents.map((doc, index) => (
+                                     <p key={index}><strong>{t(doc.name)}:</strong> <a href={doc.url} target="_blank" rel="noopener noreferrer" className="underline text-blue-600 hover:text-blue-800">{t("View Document")}</a></p>
+                                 ))
+                             )}
+                         </div>
                         </div>
-                    )}
                 </div>
             </DialogContent>
         )}
     </Dialog>
   );
 }
+
