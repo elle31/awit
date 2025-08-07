@@ -217,7 +217,9 @@ function FisherfolkRegisterDetailsPageContent() {
   const formValues = form.watch();
 
   return (
-    <Suspense fallback={<div>Loading...</div>}> 
+    <Suspense fallback={<div>Loading...</div>}>
+      {/* START_RETURN */}
+      <>
        <div className="space-y-2 mb-8">
           <h1 className="text-3xl font-bold font-headline tracking-tight">{t("New Registration - Step 2")}</h1>
           <p className="text-muted-foreground">
@@ -225,14 +227,14 @@ function FisherfolkRegisterDetailsPageContent() {
           </p>
         </div>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(() => setIsSummaryOpen(true))} className="space-y-8">
-            
-            <RegistrationTypeToggle 
-                active={registrationType}
-                onVesselClick={() => handleRegistrationTypeChange('vessel')}
-                onGearClick={() => handleRegistrationTypeChange('gear')}
+ <form onSubmit={form.handleSubmit(() => setIsSummaryOpen(true))} className="space-y-8">
+
+            <RegistrationTypeToggle
+ active={registrationType}
+ onVesselClick={() => handleRegistrationTypeChange('vessel')}
+ onGearClick={() => handleRegistrationTypeChange('gear')}
             />
-            
+
             <Card>
               <CardHeader>
                 <CardTitle>{registrationType === 'vessel' ? t("Vessel Details") : t("Fishing Gear Details")}</CardTitle>
@@ -393,7 +395,7 @@ function FisherfolkRegisterDetailsPageContent() {
             </Card>
 
             <div className="flex justify-end gap-2">
-                 <Button type="button" variant="outline" size="lg" onClick={() => router.back()}>
+ <Button type="button" variant="outline" size="lg" onClick={() => router.back()}>
                     <ArrowLeft className="mr-2 h-4 w-4"/> {t("Back")}
                 </Button>
                 <Button type="submit" size="lg">
@@ -402,7 +404,7 @@ function FisherfolkRegisterDetailsPageContent() {
             </div>
           </form>
         </Form>
-       <Dialog open={isSummaryOpen} onOpenChange={setIsSummaryOpen}> 
+ <Dialog open={isSummaryOpen} onOpenChange={setIsSummaryOpen}>
         <DialogContent className="sm:max-w-md">
             <DialogHeader>
                 <DialogTitle>Registration Summary</DialogTitle>
@@ -468,6 +470,7 @@ function FisherfolkRegisterDetailsPageContent() {
       </div>
     </Suspense>
   );
+  // END_RETURN
 }
 
 export default function FisherfolkRegisterDetailsPage() {
