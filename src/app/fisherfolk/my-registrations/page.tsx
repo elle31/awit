@@ -110,7 +110,8 @@ function MyRegistrationsClientComponent() {
         });
     };
 
-    return (
+
+ return (
         <>
             {/* Render the list of registrations */}
             <div className="container mx-auto py-6">
