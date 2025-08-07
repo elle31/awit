@@ -16,6 +16,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Payment } from "@/lib/types";
 import { Separator } from "@/components/ui/separator";
 
+export const dynamic = 'force-dynamic';
+
 const feeCategories = {
 
 
