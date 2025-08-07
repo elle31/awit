@@ -85,7 +85,6 @@ function MyRegistrationsClientComponent() {
                 return { ...reg, status: 'Approved' as 'Approved', expiryDate: newExpiryDate, history: newHistory };
             }
             return reg;
-        )}
         });
 
         const globalUpdatedRegistrations = registrations.map(reg => {
@@ -111,7 +110,46 @@ function MyRegistrationsClientComponent() {
         });
     };
 
-  return (
+ return (
+ <>
+ {/* Render the list of registrations */}
+ <div className="container mx-auto py-6">
+ <h2 className="text-2xl font-bold mb-4">{t("My Registrations")}</h2>
+ {myRegistrations.length === 0 ? (
+ <p>{t("No registrations found.")}</p>
+ ) : (
+ <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+ {myRegistrations.map(reg => (
+ <Card key={reg.id} className="flex flex-col">
+ <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+ <CardTitle className="text-xl font-medium">
+ {reg.type === 'Vessel' ? t("Vessel Registration") : t("Fishing Gear Registration")}
+ </CardTitle>
+ <Badge variant={reg.status === 'Approved' ? 'default' : reg.status === 'Pending' ? 'secondary' : 'destructive'}>
+ {getStatusIcon(reg.status)} {t(reg.status)}
+ </Badge>
+ </CardHeader>
+ <CardContent className="flex-grow space-y-2 text-sm text-muted-foreground">
+ <p><strong>{t("Registration Date:")}</strong> {reg.registrationDate}</p>
+ <p><strong>{t("Expiry Date:")}</strong> {reg.expiryDate}</p>
+ </CardContent>
+ <div className="p-6 pt-0 flex gap-2">
+ {reg.status !== 'Pending' && (
+ <Button variant="default" size="sm" className="flex-1" onClick={() => handleRenew(reg.id)}>
+ <RefreshCw className="mr-2 h-4 w-4" /> {t("Renew")}
+ </Button>
+ )}
+ <DialogTrigger asChild>
+ <Button variant="outline" size="sm" className="flex-1" onClick={() => setSelectedRegistration(reg)}>
+ <Eye className="mr-2 h-4 w-4" /> {t("Details")}
+ </Button>
+ </DialogTrigger>
+ </div>
+ </Card>
+ ))}
+ </div>
+ )}
+ </div>
     <Dialog>
  <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
@@ -176,6 +214,7 @@ function MyRegistrationsClientComponent() {
                          </div>
                         </div>
                 </div>
+ </DialogContent>
                 {/* Render the list of registrations */}
       <div className="container mx-auto py-6">
             <h2 className="text-2xl font-bold mb-4">{t("My Registrations")}</h2>
