@@ -1,5 +1,5 @@
 "use client";
-
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +15,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "@/lib/i18n/client";
 
 type FormData = z.infer<typeof DetailsSchema>;
+
+function DetailsPageContent() {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { id } = useParams();
 
 export default function DetailsPage() {
   const { t } = useTranslation();
@@ -74,6 +79,7 @@ export default function DetailsPage() {
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold font-headline tracking-tight">
+
         {t("New Registration - Step 2")}
       </h1>
       <p className="text-muted-foreground">
@@ -99,5 +105,14 @@ export default function DetailsPage() {
         </form>
       )}
     </div>
+  );
+}
+}
+
+export default function DetailsPage() {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <DetailsPageContent />
+    </Suspense>
   );
 }
