@@ -7,8 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useRouter } from "next/navigation";
 import { z } from "zod";
 import { DetailsSchema } from "./schema";
-import { getDetailsByRegistrationId, updateDetails } from "@/actions/details";
-import { toast } from "sonner";
+import { getDetailsByRegistrationId, updateDetails } from '@/actions/details';
+import { toast } from 'sonner';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,10 +18,11 @@ import { useTranslation } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileCheck2, Upload, X, ArrowLeft } from "lucide-react";
+import { useSearchParams } from 'next/navigation';
 
 type FormData = z.infer<typeof DetailsSchema>;
 
-  const [loading, setLoading] = useState(true);
+export const dynamic = 'force-dynamic';
 
   useEffect(() => {
     if (!id) return;
@@ -53,9 +54,13 @@ type FormData = z.infer<typeof DetailsSchema>;
     fetchDetails();
   }, [id, setValue]);
 
-
 function DetailsPageContent() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // Ensure useTranslation is called within the component
+  const searchParams = useSearchParams(); // useSearchParams requires a client component
+  const id = searchParams.get('id'); // Get id from search params
+
+
+ const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { id } = useParams();
   const {
@@ -66,6 +71,42 @@ function DetailsPageContent() {
     watch
   } = useForm<FormData>({
     resolver: zodResolver(DetailsSchema),
+    defaultValues: { // Set default values here
+      type: '',
+      name: '',
+      registrationNumber: '',
+      tonnage: 0,
+      length: 0,
+      breadth: 0,
+      depth: 0,
+      engineMake: '',
+      horsepower: 0,
+      netTonnage: 0,
+      grossTonnage: 0,
+      fishingGear: '',
+    }
+  });
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchDetails = async () => {
+      try {
+        const data = await getDetailsByRegistrationId(id as string);
+        if (data) {
+          // Set form values with loaded data
+          Object.keys(data).forEach(key => {
+            setValue(key as keyof FormData, (data as any)[key]);
+          });
+        }
+      } catch (error) {
+        toast.error("Failed to load details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetails();
   });
  const registrationType = watch("type");
 
@@ -88,7 +129,7 @@ function DetailsPageContent() {
       <p className="text-muted-foreground">
         {t("Provide the details for your vessel or fishing gear.")}
       </p>
-        <p>Loading...</p>
+      {loading ? ( // Conditional rendering based on loading state
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* form fields */}
