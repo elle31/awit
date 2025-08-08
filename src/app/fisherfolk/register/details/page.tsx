@@ -131,6 +131,7 @@ function DetailsPageContent() {
       </p>
       {loading ? ( // Conditional rendering based on loading state
       ) : (
+        <div>Loading details...</div> // Add a loading message when loading is true
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* form fields */}
           <div>
